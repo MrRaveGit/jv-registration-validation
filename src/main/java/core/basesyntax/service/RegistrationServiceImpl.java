@@ -14,13 +14,19 @@ public class RegistrationServiceImpl implements RegistrationService {
     @Override
     public User register(User user) {
         if (user == null) {
-            throw new NullPointerException("user cannot be null");
+            throw new RegistrationException("user cannot be null");
         }
-        if (storageDao.get(user.getLogin()) != null) {
-            throw new RegistrationException("User with this login already exists");
+        if (user.getLogin() == null || user.getLogin().isEmpty()) {
+            throw new RegistrationException("login cannot be null");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new RegistrationException("password cannot be null");
         }
         if (user.getAge() == null) {
             throw new RegistrationException("age cannot be null");
+        }
+        if (storageDao.get(user.getLogin()) != null) {
+            throw new RegistrationException("User with this login already exists");
         }
         if (user.getAge() <= NEGATIVE_NUMBER) {
             throw new RegistrationException("age cannot be negative");
@@ -28,14 +34,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         if (user.getAge() < MIN_AGE) {
             throw new RegistrationException("age cannot be under 18");
         }
-        if (user.getLogin() == null || user.getLogin().isEmpty()) {
-            throw new RegistrationException("login cannot be null");
-        }
         if (user.getLogin().length() < MIN_LENGTH) {
             throw new RegistrationException("login length cannot be under 6 characters");
-        }
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new RegistrationException("password cannot be null");
         }
         if (user.getPassword().length() < MIN_LENGTH) {
             throw new RegistrationException("password length cannot be under 6 characters");
